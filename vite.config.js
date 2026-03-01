@@ -12,7 +12,7 @@ export default defineConfig({
       // Alias to access shared services from Shell
       "@shared-services": path.resolve(
         __dirname,
-        "../biotech-shell/src/shared/services"
+        "../biotech-shell/src/shared/services",
       ),
     },
   },
@@ -30,7 +30,7 @@ export default defineConfig({
       filename: "remoteEntry.js",
       exposes: {
         "./InventoryDashboard":
-          "./src/features/inventory-dashboard/components/InventoryDashboard.jsx",
+          "./src/features/inventory/components/InventoryList.jsx",
         "./InventoryStore": "./src/shared/store/inventoryStore.js",
       },
       shared: ["react", "react-dom", "react-router-dom", "zustand", "axios"],
