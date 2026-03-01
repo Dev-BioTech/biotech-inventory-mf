@@ -2,6 +2,18 @@ import { useState, useEffect, useMemo } from "react";
 import { inventoryService } from "../services/inventoryService";
 import { STOCK_STATUS } from "@/shared/constants/inventoryConstants";
 
+/** Read farmId from the shared auth-storage (Zustand persist key) */
+function getFarmId() {
+  try {
+    const stored = localStorage.getItem("auth-storage");
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed?.state?.selectedFarm?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function useInventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
@@ -14,9 +26,15 @@ export function useInventory() {
   }, []);
 
   const loadProducts = async () => {
+    const farmId = getFarmId();
+    if (!farmId) {
+      console.warn("useInventory: no farmId found, skipping fetch");
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      const data = await inventoryService.getProducts();
+      const data = await inventoryService.getProducts(farmId);
       setProducts(data);
     } catch (error) {
       console.error("Failed to load inventory:", error);
