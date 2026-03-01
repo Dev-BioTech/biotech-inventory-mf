@@ -1,4 +1,4 @@
-import apiService from "@shared-services/ApiService";
+import apiClient from "../utils/apiClient";
 
 export const inventoryService = {
   // ========== PRODUCTS ==========
@@ -6,7 +6,7 @@ export const inventoryService = {
   // POST /api/Products - Create a new product
   createProduct: async (productData) => {
     try {
-      const response = await apiService.post("/Products", productData);
+      const response = await apiClient.post("/Products", productData);
       return response.data;
     } catch (error) {
       console.error("Error creating product:", error);
@@ -18,7 +18,7 @@ export const inventoryService = {
   getProducts: async (farmId) => {
     try {
       const url = farmId ? `/Products?farmId=${farmId}` : "/Products";
-      const response = await apiService.get(url);
+      const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -29,7 +29,7 @@ export const inventoryService = {
   // GET /api/Products/low-stock - Get low stock products
   getLowStockProducts: async () => {
     try {
-      const response = await apiService.get("/Products/low-stock");
+      const response = await apiClient.get("/Products/low-stock");
       return response.data;
     } catch (error) {
       console.error("Error fetching low stock products:", error);
@@ -42,7 +42,7 @@ export const inventoryService = {
   // POST /api/Inventory - Create inventory item
   createInventoryItem: async (inventoryData) => {
     try {
-      const response = await apiService.post("/Inventory", inventoryData);
+      const response = await apiClient.post("/Inventory", inventoryData);
       return response.data;
     } catch (error) {
       console.error("Error creating inventory item:", error);
@@ -53,7 +53,7 @@ export const inventoryService = {
   // GET /api/Inventory/farm/{farmId} - Get inventory items by farm
   getInventoryByFarm: async (farmId) => {
     try {
-      const response = await apiService.get(`/Inventory/farm/${farmId}`);
+      const response = await apiClient.get(`/Inventory/farm/${farmId}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching inventory for farm ${farmId}:`, error);
@@ -66,7 +66,7 @@ export const inventoryService = {
   // POST /api/InventoryMovements - Register inventory movement (in/out)
   createInventoryMovement: async (movementData) => {
     try {
-      const response = await apiService.post(
+      const response = await apiClient.post(
         "/InventoryMovements",
         movementData
       );
@@ -80,7 +80,7 @@ export const inventoryService = {
   // GET /api/InventoryMovements/product/{productId} - Get movement history (Kardex) for a product
   getProductMovements: async (productId) => {
     try {
-      const response = await apiService.get(
+      const response = await apiClient.get(
         `/InventoryMovements/product/${productId}`
       );
       return response.data;
