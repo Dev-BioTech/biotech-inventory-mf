@@ -89,6 +89,17 @@ export default function InventoryList() {
     );
   }
 
+  if (isModalOpen) {
+    return (
+      <InventoryForm
+        product={editingProduct}
+        onSubmit={handleSubmit}
+        onCancel={() => setIsModalOpen(false)}
+        loading={operationLoading}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6 font-sans relative">
       <ToastContainer />
@@ -111,20 +122,6 @@ export default function InventoryList() {
         onEdit={handleEdit}
         onDelete={confirmDelete}
       />
-
-      {/* Create/Edit Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={editingProduct ? "Editar Producto" : "Nuevo Producto"}
-      >
-        <InventoryForm
-          product={editingProduct}
-          onSubmit={handleSubmit}
-          onCancel={() => setIsModalOpen(false)}
-          loading={operationLoading}
-        />
-      </Modal>
 
       {/* Delete Confirmation Modal */}
       <ConfirmModal
