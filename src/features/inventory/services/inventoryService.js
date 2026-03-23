@@ -1,79 +1,84 @@
 import apiClient from "@shared/utils/apiClient";
 
 /**
- * Feature-level Inventory Service
- * Uses the shared apiClient (baseURL = /api already set).
+ * Inventory Service — Full CRUD
+ * All paths use /v1/ prefix matching ocelot.json upstream routes.
  *
- * Products   → GET/POST /api/Products
- * Inventory  → GET/POST /api/Inventory
- * Movements  → GET/POST /api/InventoryMovements
+ * Gateway routes:
+ *   /api/v1/products/{everything}            → ProductsController (needs [Route("api/v1/products")])
+ *   /api/v1/inventory/{everything}           → InventoryController
+ *   /api/v1/inventory-movements/{everything} → InventoryMovementsController
  */
 export const inventoryService = {
-  // ── POST /api/Products ────────────────────────────────────────────────
+
+  // ── PRODUCTS ──────────────────────────────────────────────────────────────
+
+  // POST /api/v1/products
   createProduct: async (productData) => {
-    const response = await apiClient.post("/Products", productData);
-    return response.data;
+    const response = await apiClient.post("/v1/products", productData);
+    return response.data?.data ?? response.data;
   },
 
-  // ── GET /api/Products?farmId=... ──────────────────────────────────────
-  // farmId is required by the backend
+  // GET /api/v1/products?farmId={farmId}
   getProducts: async (farmId) => {
     if (!farmId) throw new Error("farmId is required to get products");
-    const response = await apiClient.get("/Products", { params: { farmId } });
+    const response = await apiClient.get("/v1/products", { params: { farmId } });
     const data = response.data;
-    // Support both array response and { data: [] } / { items: [] }
     return Array.isArray(data) ? data : (data?.data ?? data?.items ?? []);
   },
 
-  // ── GET /api/Products/low-stock?farmId=... ────────────────────────────
+  // GET /api/v1/products/{id}
+  getProductById: async (id) => {
+    const response = await apiClient.get(`/v1/products/${id}`);
+    return response.data?.data ?? response.data;
+  },
+
+  // GET /api/v1/products/farms/{farmId}/low-stock
   getLowStockProducts: async (farmId) => {
     if (!farmId) throw new Error("farmId is required");
-    const response = await apiClient.get("/Products/low-stock", {
-      params: { farmId },
-    });
+    const response = await apiClient.get(`/v1/products/farms/${farmId}/low-stock`);
     const data = response.data;
     return Array.isArray(data) ? data : (data?.data ?? data?.items ?? []);
   },
 
-  // ── PUT (update) — no dedicated PUT in docs, use POST with id if backend supports ──
-  // Keeping method for frontend compatibility. Adjust path if backend adds PUT /Products/{id}
+  // PUT /api/v1/products/{id}
   updateProduct: async (id, updates) => {
-    const response = await apiClient.put(`/Products/${id}`, updates);
-    return response.data;
+    const response = await apiClient.put(`/v1/products/${id}`, updates);
+    return response.data?.data ?? response.data;
   },
 
-  // ── DELETE /api/Products/{id} ─────────────────────────────────────────
+  // DELETE /api/v1/products/{id}
   deleteProduct: async (id) => {
-    const response = await apiClient.delete(`/Products/${id}`);
+    const response = await apiClient.delete(`/v1/products/${id}`);
     return response.data;
   },
 
-  // ── POST /api/Inventory ───────────────────────────────────────────────
+  // ── INVENTORY ─────────────────────────────────────────────────────────────
+
+  // POST /api/v1/inventory
   createInventoryItem: async (inventoryData) => {
-    const response = await apiClient.post("/Inventory", inventoryData);
-    return response.data;
+    const response = await apiClient.post("/v1/inventory", inventoryData);
+    return response.data?.data ?? response.data;
   },
 
-  // ── GET /api/Inventory/farm/{farmId} ─────────────────────────────────
+  // GET /api/v1/inventory/farm/{farmId}?page=&pageSize=
   getInventoryByFarm: async (farmId, params = {}) => {
-    const response = await apiClient.get(`/Inventory/farm/${farmId}`, {
-      params,
-    });
+    const response = await apiClient.get(`/v1/inventory/farm/${farmId}`, { params });
     const data = response.data;
     return Array.isArray(data) ? data : (data?.data ?? data?.items ?? []);
   },
 
-  // ── POST /api/InventoryMovements ──────────────────────────────────────
+  // ── INVENTORY MOVEMENTS ───────────────────────────────────────────────────
+
+  // POST /api/v1/inventory-movements
   createInventoryMovement: async (movementData) => {
-    const response = await apiClient.post("/InventoryMovements", movementData);
-    return response.data;
+    const response = await apiClient.post("/v1/inventory-movements", movementData);
+    return response.data?.data ?? response.data;
   },
 
-  // ── GET /api/InventoryMovements/product/{productId} ───────────────────
+  // GET /api/v1/inventory-movements/product/{productId}
   getProductMovements: async (productId) => {
-    const response = await apiClient.get(
-      `/InventoryMovements/product/${productId}`,
-    );
+    const response = await apiClient.get(`/v1/inventory-movements/product/${productId}`);
     const data = response.data;
     return Array.isArray(data) ? data : (data?.data ?? data?.items ?? []);
   },
