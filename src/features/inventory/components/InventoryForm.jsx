@@ -37,18 +37,33 @@ export function InventoryForm({ product, onSubmit, onCancel, loading }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Prevents pasting or typing negative numbers in number fields
+    if (['stock', 'minStock', 'maxStock', 'price'].includes(name)) {
+      if (value !== "" && Number(value) < 0) return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validations antes de enviar
     const submissionData = {
       ...formData,
-      stock: Number(formData.stock),
-      minStock: Number(formData.minStock),
-      maxStock: Number(formData.maxStock),
-      price: Number(formData.price),
+      unit: formData.unit?.trim() ? formData.unit.trim() : "Unit",
+      stock: Math.max(0, Number(formData.stock)),
+      minStock: Math.max(0, Number(formData.minStock)),
+      maxStock: Math.max(0, Number(formData.maxStock)),
+      price: Math.max(0, Number(formData.price)),
     };
+    
+    if (submissionData.minStock > submissionData.maxStock) {
+      alert("El stock mínimo no puede ser mayor que el stock máximo.");
+      return;
+    }
+
     onSubmit(submissionData);
   };
 
@@ -178,14 +193,13 @@ export function InventoryForm({ product, onSubmit, onCancel, loading }) {
                 />
               </div>
               <div>
-                <label className={labelStyles}>Unidad de Medida</label>
+                <label className={labelStyles}>Unidad de Medida (Opcional)</label>
                 <input
                   type="text"
                   name="unit"
                   value={formData.unit}
                   onChange={handleChange}
-                  required
-                  placeholder="KG, LT, UNIDADES"
+                  placeholder="Ej: KG, LT (Por defecto: Unit)"
                   className={inputStyles}
                 />
               </div>
