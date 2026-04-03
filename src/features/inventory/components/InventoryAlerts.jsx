@@ -2,7 +2,7 @@ import { AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function InventoryAlerts({ stats }) {
-  if (stats.lowStock === 0 && stats.criticalStock === 0) return null;
+  if (!stats || (stats.lowStock === 0 && stats.criticalStock === 0)) return null;
 
   return (
     <motion.div

@@ -32,6 +32,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // If we get a 401, the token is definitely invalid or expired.
+      console.error("[Inventory-MF] Unauthorized request detected. Logging out...");
       localStorage.removeItem("auth-storage");
       window.dispatchEvent(new Event("auth-change"));
     }
