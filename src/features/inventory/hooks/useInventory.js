@@ -52,7 +52,6 @@ export function useInventory() {
       const productWithFarm = { ...productData, farmId };
       const newProduct = await inventoryService.createProduct(productWithFarm);
       setProducts((prev) => [newProduct, ...prev]);
-      alertService.success("Producto creado correctamente");
       return true;
     } catch (error) {
       console.error("Failed to create product:", error);
@@ -110,7 +109,6 @@ export function useInventory() {
       else mergedProduct.status = "Óptimo";
 
       setProducts((prev) => prev.map((p) => (p.id === id ? mergedProduct : p)));
-      alertService.success("Producto actualizado correctamente");
       return true;
     } catch (error) {
       console.error("Failed to update product:", error);
@@ -133,7 +131,6 @@ export function useInventory() {
       setOperationLoading(true);
       await inventoryService.deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
-      alertService.success("Producto eliminado correctamente");
       return true;
     } catch (error) {
       console.error("Failed to delete product:", error);
